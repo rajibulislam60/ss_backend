@@ -2,8 +2,14 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
-const Port = process.env.PORT;
+const PORT = process.env.PORT;
 
-app.listen(Port, function () {
-  console.log(`Server is working ${Port}`);
+console.log("PORT from .env:", PORT);
+
+app.post("/", (req, res) => {
+  res.send("This project and Render are working!");
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is working on port ${PORT}`);
 });
