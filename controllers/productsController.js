@@ -1,9 +1,25 @@
 const path = require("path");
 const fs = require("fs");
+const productModel = require("../models/productModel");
 
 const addProductController = async (req, res) => {
   try {
-    res.send("Controller and api work well.");
+    const { name, price } = req.body;
+
+    if (!name || !price) {
+      res.send("fields is require.");
+    }
+    const product = new productModel({
+      name,
+      price,
+    });
+
+    const savedProduct = await product.save();
+
+    res.status(201).json({
+      message: "Product add successfully.",
+      data: savedProduct,
+    });
   } catch (error) {
     console.log(error);
   }
