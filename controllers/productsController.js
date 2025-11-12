@@ -25,4 +25,12 @@ const addProductController = async (req, res) => {
   }
 };
 
-module.exports = { addProductController };
+const allProductsController = async (req, res) => {
+  try {
+    res.send("allproducts controller working as well.");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = { addProductController, allProductsController };
