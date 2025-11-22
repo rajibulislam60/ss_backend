@@ -4,14 +4,22 @@ const productModel = require("../models/productModel");
 
 const addProductController = async (req, res) => {
   try {
-    const { name, price } = req.body;
+    const { name, description, image, price, discount, quantity } = req.body;
 
-    if (!name || !price) {
-      res.send("fields is require.");
+    if (!name || !description || !price || !discount || !quantity) {
+      return res.send("fields is require.");
     }
+
+    const images =
+      req.files?.map((item) => process.env.Host_Url + item.filename) || [];
+
     const product = new productModel({
       name,
+      description,
+      image: images,
       price,
+      discount,
+      quantity,
     });
 
     const savedProduct = await product.save();
