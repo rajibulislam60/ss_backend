@@ -4,6 +4,7 @@ const {
   addProductController,
   allProductsController,
   updateProductController,
+  deletedProductController,
 } = require("../../controllers/productsController");
 const router = express.Router();
 
@@ -38,10 +39,11 @@ router.post(
 );
 router.get("/allproducts", allProductsController);
 router.patch(
-  "/updatedproduct",
+  "/updatedproduct/:id",
   upload.array("image"),
   errCheck,
   updateProductController
 );
+router.delete("/deletedproduct/:id", deletedProductController);
 
 module.exports = router;

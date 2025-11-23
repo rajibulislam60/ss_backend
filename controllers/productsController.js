@@ -72,8 +72,23 @@ const updateProductController = async (req, res) => {
   }
 };
 
+const deletedProductController = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const deletedProduct = await productModel.findOneAndDelete(productId);
+
+    res.status(201).json({
+      message: "Product updated successfully.",
+      data: deletedProduct,
+    });
+  } catch (error) {
+    return res.status(500).send({ success: false, msg: err.message });
+  }
+};
+
 module.exports = {
   addProductController,
   allProductsController,
   updateProductController,
+  deletedProductController,
 };
