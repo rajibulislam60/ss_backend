@@ -3,6 +3,7 @@ const multer = require("multer");
 const {
   addProductController,
   allProductsController,
+  updateProductController,
 } = require("../../controllers/productsController");
 const router = express.Router();
 
@@ -36,5 +37,11 @@ router.post(
   addProductController
 );
 router.get("/allproducts", allProductsController);
+router.patch(
+  "/updatedproduct",
+  upload.array("image"),
+  errCheck,
+  updateProductController
+);
 
 module.exports = router;

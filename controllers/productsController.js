@@ -46,4 +46,34 @@ const allProductsController = async (req, res) => {
   }
 };
 
-module.exports = { addProductController, allProductsController };
+const updateProductController = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const updatedData = req.body;
+
+    if (req.files && req.files.length > 0) {
+      updatedData.image = req.files.map(
+        (item) => process.env.Host_Url + item.filename
+      );
+    }
+
+    const updatedProduct = await productModel.findOneAndUpdate(
+      productId,
+      updatedData,
+      { new: true }
+    );
+
+    res.status(201).json({
+      message: "Product updated successfully.",
+      data: updatedProduct,
+    });
+  } catch (error) {
+    return res.status(500).send({ success: false, msg: err.message });
+  }
+};
+
+module.exports = {
+  addProductController,
+  allProductsController,
+  updateProductController,
+};
