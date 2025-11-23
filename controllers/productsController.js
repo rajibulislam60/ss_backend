@@ -29,15 +29,20 @@ const addProductController = async (req, res) => {
       data: savedProduct,
     });
   } catch (error) {
-    console.log(error);
+    return res.status(500).send({ success: false, msg: err.message });
   }
 };
 
 const allProductsController = async (req, res) => {
   try {
-    res.send("allproducts controller working as well.");
+    let allproducts = await productModel.find({});
+    return res.status(200).json({
+      success: true,
+      msg: "All products successfull",
+      data: allproducts,
+    });
   } catch (error) {
-    console.log(error);
+    return res.status(500).send({ success: false, msg: err.message });
   }
 };
 
