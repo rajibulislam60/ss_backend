@@ -1,55 +1,32 @@
-const { default: mongoose, Schema } = require("mongoose");
+const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
-    image: {
-      type: Array,
-      required: true,
-    },
-    price: {
-      type: Number,
-      required: true,
-    },
-    quantity: {
-      type: Number,
-      required: true,
-    },
-
-    // Array of customer details
-    details: [
+    products: [
       {
-        c_name: {
-          type: String,
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
           required: true,
         },
-        phone: {
+        quantity: {
           type: Number,
-          required: true,
-        },
-        address: {
-          type: String,
-          required: true,
-        },
-        city: {
-          type: String,
-          enum: [
-            "Dhaka",
-            "Chittagong",
-            "Sylhet",
-            "Rajshahi",
-            "Khulna",
-            "Barishal",
-            "Rangpur",
-            "Mymensingh",
-          ],
           required: true,
         },
       },
     ],
+
+    customer: {
+      c_name: { type: String, required: true },
+      phone: { type: Number, required: true },
+      address: { type: String, required: true },
+      city: { type: String, required: true },
+    },
+
+    totalPrice: {
+      type: Number,
+      required: true,
+    },
   },
   { timestamps: true }
 );
