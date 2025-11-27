@@ -12,20 +12,19 @@ const orderSchema = new mongoose.Schema(
         quantity: {
           type: Number,
           required: true,
+          default: 1,
+        },
+        price: {
+          type: Number,
+          required: true,
         },
       },
     ],
 
     customer: {
       c_name: { type: String, required: true },
-      phone: { type: Number, required: true },
+      phone: { type: String, required: true },
       address: { type: String, required: true },
-      city: { type: String, required: true },
-    },
-
-    totalPrice: {
-      type: Number,
-      required: true,
     },
   },
   { timestamps: true }

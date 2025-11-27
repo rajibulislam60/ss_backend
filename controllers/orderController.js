@@ -1,42 +1,25 @@
 const orderModel = require("../models/orderModel");
-const productModel = require("../models/productModel");
 
 const createOrderController = async (req, res) => {
   try {
     const { products, customer } = req.body;
-
-    if (!products || products.length === 0) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Products are required!" });
+    if (!products || !customer) {
+      return res.send("fields is require.");
     }
 
-    let total = 0;
-
-    for (let item of products) {
-      const product = await productModel.findById(item.productId);
-
-      if (!product) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Product not found" });
-      }
-
-      total += product.price * item.quantity;
-    }
-
-    const newOrder = await orderModel.create({
+    const createorder = new orderModel({
       products,
       customer,
-      totalPrice: total,
     });
+    const savedorder = await createorder.save();
 
     res.status(201).json({
       success: true,
-      message: "Order Created Successfully",
-      data: newOrder,
+      message: "Add Order Successfully",
+      data: savedorder,
     });
   } catch (error) {
+    console.log("order:", error);
     res.status(500).json({ success: false, message: "Server Error!" });
   }
 };
