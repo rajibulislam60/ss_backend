@@ -1,7 +1,7 @@
 const orderModel = require("../models/orderModel");
 const productModel = require("../models/productModel");
 
-const createOrder = async (req, res) => {
+const createOrderController = async (req, res) => {
   try {
     const { products, customer } = req.body;
 
@@ -37,9 +37,22 @@ const createOrder = async (req, res) => {
       data: newOrder,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ success: false, message: "Server Error!" });
   }
 };
 
-module.exports = { createOrder };
+const allOrdersController = async (req, res) => {
+  try {
+    const allOrders = await orderModel.find({});
+
+    res.status(201).json({
+      success: true,
+      message: "All Order Successfully",
+      data: allOrders,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error!" });
+  }
+};
+
+module.exports = { createOrderController, allOrdersController };
