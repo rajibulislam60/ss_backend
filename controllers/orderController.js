@@ -59,8 +59,23 @@ const confirmOrderController = async (req, res) => {
   }
 };
 
+const allConfirmedOrders = async (req, res) => {
+  try {
+    const orders = await orderModel.find({ status: "confirmed" });
+
+    res.json({
+      success: true,
+      message: "Confirmed Orders",
+      data: orders,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
 module.exports = {
   createOrderController,
   allOrdersController,
   confirmOrderController,
+  allConfirmedOrders,
 };
