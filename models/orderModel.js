@@ -26,6 +26,11 @@ const orderSchema = new mongoose.Schema(
       phone: { type: String, required: true },
       address: { type: String, required: true },
     },
+    status: {
+      type: String,
+      enum: ["pending", "confirmed", "cancelled"],
+      default: "pending",
+    },
   },
   { timestamps: true }
 );

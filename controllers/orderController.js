@@ -38,4 +38,29 @@ const allOrdersController = async (req, res) => {
   }
 };
 
-module.exports = { createOrderController, allOrdersController };
+// ===================== Confirm Order area =====================
+const confirmOrderController = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+
+    const updatedOrder = await orderModel.findByIdAndUpdate(
+      orderId,
+      { status: "confirmed" },
+      { new: true }
+    );
+
+    res.json({
+      success: true,
+      message: "Order confirmed successfully",
+      data: updatedOrder,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+module.exports = {
+  createOrderController,
+  allOrdersController,
+  confirmOrderController,
+};
