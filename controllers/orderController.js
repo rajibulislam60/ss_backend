@@ -73,7 +73,7 @@ const allConfirmedOrders = async (req, res) => {
   }
 };
 
-// ===================== Confirm Order area =====================
+// ===================== Cancel Order area =====================
 const cancelOrderController = async (req, res) => {
   try {
     const orderId = req.params.id;
@@ -108,7 +108,7 @@ const allCancelOrders = async (req, res) => {
   }
 };
 
-// ===================== Confirm Order area =====================
+// ===================== Hold Order area =====================
 const holdController = async (req, res) => {
   try {
     const orderId = req.params.id;
@@ -143,6 +143,33 @@ const allHoldOrders = async (req, res) => {
   }
 };
 
+// ====================== Edit Order Area ===================
+
+const editOrderController = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const { products, customer, courier, note } = req.body;
+
+    const updatedOrder = await orderModel.findByIdAndUpdate(
+      orderId,
+      {
+        ...(products && { products }),
+        ...(customer && { customer }),
+        ...(courier && { courier }),
+        ...(note && { note }),
+      },
+      { new: true }
+    );
+    res.json({
+      success: true,
+      message: "Order updated successfully",
+      data: updatedOrder,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
 module.exports = {
   createOrderController,
   allOrdersController,
@@ -152,4 +179,5 @@ module.exports = {
   allCancelOrders,
   holdController,
   allHoldOrders,
+  editOrderController,
 };

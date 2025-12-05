@@ -26,6 +26,16 @@ const orderSchema = new mongoose.Schema(
       phone: { type: String, required: true },
       address: { type: String, required: true },
     },
+    courier: {
+      type: String,
+      enum: ["None", "SteadFast", "Pathao", "RedEx", "CarryBee"],
+      default: "None",
+    },
+
+    note: {
+      type: String,
+      default: "",
+    },
     status: {
       type: String,
       enum: ["pending", "confirmed", "cancelled", "hold"],
