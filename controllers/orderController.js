@@ -73,9 +73,46 @@ const allConfirmedOrders = async (req, res) => {
   }
 };
 
+// ===================== Confirm Order area =====================
+const cancelOrderController = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+
+    const updatedOrder = await orderModel.findByIdAndUpdate(
+      orderId,
+      { status: "cancelled" },
+      { new: true }
+    );
+
+    res.json({
+      success: true,
+      message: "Order cancelled successfully",
+      data: updatedOrder,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+const allCancelOrders = async (req, res) => {
+  try {
+    const orders = await orderModel.find({ status: "cancelled" });
+
+    res.json({
+      success: true,
+      message: "cancelled Orders",
+      data: orders,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
 module.exports = {
   createOrderController,
   allOrdersController,
   confirmOrderController,
   allConfirmedOrders,
+  cancelOrderController,
+  allCancelOrders,
 };
