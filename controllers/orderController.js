@@ -108,6 +108,41 @@ const allCancelOrders = async (req, res) => {
   }
 };
 
+// ===================== Confirm Order area =====================
+const holdController = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+
+    const updatedOrder = await orderModel.findByIdAndUpdate(
+      orderId,
+      { status: "hold" },
+      { new: true }
+    );
+
+    res.json({
+      success: true,
+      message: "Order hold successfully",
+      data: updatedOrder,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+const allHoldOrders = async (req, res) => {
+  try {
+    const orders = await orderModel.find({ status: "hold" });
+
+    res.json({
+      success: true,
+      message: "Hold Orders",
+      data: orders,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
 module.exports = {
   createOrderController,
   allOrdersController,
@@ -115,4 +150,6 @@ module.exports = {
   allConfirmedOrders,
   cancelOrderController,
   allCancelOrders,
+  holdController,
+  allHoldOrders,
 };

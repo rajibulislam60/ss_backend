@@ -6,6 +6,8 @@ const {
   allConfirmedOrders,
   cancelOrderController,
   allCancelOrders,
+  holdController,
+  allHoldOrders,
 } = require("../../controllers/orderController");
 const router = express.Router();
 
@@ -15,8 +17,8 @@ router.put("/confirmorder/:id", confirmOrderController);
 router.get("/allconfirmed", allConfirmedOrders);
 router.put("/cancel/:id", cancelOrderController);
 router.get("/allcancelled", allCancelOrders);
-router.put("/cancel/:id", cancelOrderController);
-router.get("/allcancelled", allConfirmedOrders);
+router.put("/hold/:id", holdController);
+router.get("/allhold", allHoldOrders);
 // router.put("/edit/:id", editOrderController);
 
 module.exports = router;
