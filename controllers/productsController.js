@@ -11,7 +11,9 @@ const addProductController = async (req, res) => {
     }
 
     const images =
-      req.files?.map((item) => process.env.Host_Url + item.filename) || [];
+      req.files?.map(
+        (item) => `${process.env.Host_Url}/uploads/${item.filename}`
+      ) || [];
 
     const product = new productModel({
       name,
@@ -29,7 +31,7 @@ const addProductController = async (req, res) => {
       data: savedProduct,
     });
   } catch (error) {
-    return res.status(500).send({ success: false, msg: err.message });
+    return res.status(500).send({ success: false, msg: error.message });
   }
 };
 
@@ -42,7 +44,7 @@ const allProductsController = async (req, res) => {
       data: allproducts,
     });
   } catch (error) {
-    return res.status(500).send({ success: false, msg: err.message });
+    return res.status(500).send({ success: false, msg: error.message });
   }
 };
 
@@ -57,7 +59,7 @@ const updateProductController = async (req, res) => {
       );
     }
 
-    const updatedProduct = await productModel.findOneAndUpdate(
+    const updatedProduct = await productModel.findByIdAndUpdate(
       productId,
       updatedData,
       { new: true }
@@ -68,7 +70,7 @@ const updateProductController = async (req, res) => {
       data: updatedProduct,
     });
   } catch (error) {
-    return res.status(500).send({ success: false, msg: err.message });
+    return res.status(500).send({ success: false, msg: error.message });
   }
 };
 
@@ -78,11 +80,34 @@ const deletedProductController = async (req, res) => {
     const deletedProduct = await productModel.findOneAndDelete(productId);
 
     res.status(201).json({
-      message: "Product updated successfully.",
+      message: "Product deleted successfully.",
       data: deletedProduct,
     });
   } catch (error) {
-    return res.status(500).send({ success: false, msg: err.message });
+    return res.status(500).send({ success: false, msg: error.message });
+  }
+};
+
+const singleProductController = async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    const product = await productModel.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Single product fetched successfully",
+      product,
+    });
+  } catch (error) {
+    return res.status(500).send({ success: false, msg: error.message });
   }
 };
 
@@ -91,4 +116,5 @@ module.exports = {
   allProductsController,
   updateProductController,
   deletedProductController,
+  singleProductController,
 };
