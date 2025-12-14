@@ -1,25 +1,19 @@
 const express = require("express");
 const {
-  allOrdersController,
   createOrderController,
-  confirmOrderController,
-  allConfirmedOrders,
-  cancelOrderController,
-  allCancelOrders,
-  holdController,
-  allHoldOrders,
+  allOrdersController,
+  updateOrderStatusController,
+  ordersByStatusController,
   editOrderController,
 } = require("../../controllers/orderController");
 const router = express.Router();
 
-router.post("/addorder", createOrderController);
+router.post("/createorder", createOrderController);
 router.get("/allorder", allOrdersController);
-router.put("/confirmorder/:id", confirmOrderController);
-router.get("/allconfirmed", allConfirmedOrders);
-router.put("/cancel/:id", cancelOrderController);
-router.get("/allcancelled", allCancelOrders);
-router.put("/hold/:id", holdController);
-router.get("/allhold", allHoldOrders);
+
+router.patch("/status/:id", updateOrderStatusController);
+router.get("/status/:status", ordersByStatusController);
+
 router.put("/edit/:id", editOrderController);
 
 module.exports = router;

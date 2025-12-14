@@ -1,8 +1,10 @@
 const orderModel = require("../models/orderModel");
 
+// ===================== Create Order =====================
 const createOrderController = async (req, res) => {
   try {
     const { products, customer } = req.body;
+
     if (!products || !customer) {
       return res.send("fields is require.");
     }
@@ -10,7 +12,9 @@ const createOrderController = async (req, res) => {
     const createorder = new orderModel({
       products,
       customer,
+      status: "pending", // default
     });
+
     const savedorder = await createorder.save();
 
     res.status(201).json({
@@ -24,11 +28,14 @@ const createOrderController = async (req, res) => {
   }
 };
 
+// ===================== All Orders =====================
 const allOrdersController = async (req, res) => {
   try {
-    const allOrders = await orderModel.find({});
+    const allOrders = await orderModel.find({}).populate({
+      path: "products.productId",
+    });
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       message: "All Order Successfully",
       data: allOrders,
@@ -38,20 +45,44 @@ const allOrdersController = async (req, res) => {
   }
 };
 
-// ===================== Confirm Order area =====================
-const confirmOrderController = async (req, res) => {
+// ===================== Update Order Status (ONE CONTROLLER) =====================
+const updateOrderStatusController = async (req, res) => {
   try {
     const orderId = req.params.id;
+    const { status } = req.body;
+
+    if (!status) {
+      return res.json({
+        success: false,
+        message: "Status is required",
+      });
+    }
+
+    const validStatus = ["pending", "confirmed", "hold", "cancelled"];
+
+    if (!validStatus.includes(status)) {
+      return res.json({
+        success: false,
+        message: "Invalid order status",
+      });
+    }
 
     const updatedOrder = await orderModel.findByIdAndUpdate(
       orderId,
-      { status: "confirmed" },
+      { status },
       { new: true }
     );
 
+    if (!updatedOrder) {
+      return res.json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
     res.json({
       success: true,
-      message: "Order confirmed successfully",
+      message: `Order ${status} successfully`,
       data: updatedOrder,
     });
   } catch (error) {
@@ -59,13 +90,18 @@ const confirmOrderController = async (req, res) => {
   }
 };
 
-const allConfirmedOrders = async (req, res) => {
+// ===================== Orders By Status =====================
+const ordersByStatusController = async (req, res) => {
   try {
-    const orders = await orderModel.find({ status: "confirmed" });
+    const status = req.params.status;
+
+    const orders = await orderModel
+      .find({ status })
+      .populate("products.productId");
 
     res.json({
       success: true,
-      message: "Confirmed Orders",
+      message: `${status} orders`,
       data: orders,
     });
   } catch (error) {
@@ -73,78 +109,7 @@ const allConfirmedOrders = async (req, res) => {
   }
 };
 
-// ===================== Cancel Order area =====================
-const cancelOrderController = async (req, res) => {
-  try {
-    const orderId = req.params.id;
-
-    const updatedOrder = await orderModel.findByIdAndUpdate(
-      orderId,
-      { status: "cancelled" },
-      { new: true }
-    );
-
-    res.json({
-      success: true,
-      message: "Order cancelled successfully",
-      data: updatedOrder,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error" });
-  }
-};
-
-const allCancelOrders = async (req, res) => {
-  try {
-    const orders = await orderModel.find({ status: "cancelled" });
-
-    res.json({
-      success: true,
-      message: "cancelled Orders",
-      data: orders,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error" });
-  }
-};
-
-// ===================== Hold Order area =====================
-const holdController = async (req, res) => {
-  try {
-    const orderId = req.params.id;
-
-    const updatedOrder = await orderModel.findByIdAndUpdate(
-      orderId,
-      { status: "hold" },
-      { new: true }
-    );
-
-    res.json({
-      success: true,
-      message: "Order hold successfully",
-      data: updatedOrder,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error" });
-  }
-};
-
-const allHoldOrders = async (req, res) => {
-  try {
-    const orders = await orderModel.find({ status: "hold" });
-
-    res.json({
-      success: true,
-      message: "Hold Orders",
-      data: orders,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error" });
-  }
-};
-
-// ====================== Edit Order Area ===================
-
+// ====================== Edit Order ===================
 const editOrderController = async (req, res) => {
   try {
     const orderId = req.params.id;
@@ -160,6 +125,7 @@ const editOrderController = async (req, res) => {
       },
       { new: true }
     );
+
     res.json({
       success: true,
       message: "Order updated successfully",
@@ -173,11 +139,7 @@ const editOrderController = async (req, res) => {
 module.exports = {
   createOrderController,
   allOrdersController,
-  confirmOrderController,
-  allConfirmedOrders,
-  cancelOrderController,
-  allCancelOrders,
-  holdController,
-  allHoldOrders,
+  updateOrderStatusController,
+  ordersByStatusController,
   editOrderController,
 };
