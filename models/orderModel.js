@@ -9,6 +9,12 @@ const orderSchema = new mongoose.Schema(
           ref: "Product",
           required: true,
         },
+        name: {
+          type: String,
+        },
+        image: {
+          type: String,
+        },
         quantity: {
           type: Number,
           required: true,
@@ -40,6 +46,22 @@ const orderSchema = new mongoose.Schema(
       type: String,
       enum: ["pending", "confirmed", "cancelled", "hold"],
       default: "pending",
+    },
+    reviews: [
+      {
+        text: { type: String },
+        time: { type: String },
+      },
+    ],
+
+    deliveryCharge: {
+      type: Number,
+      default: 0,
+    },
+
+    discount: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true }

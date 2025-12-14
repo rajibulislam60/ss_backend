@@ -31,9 +31,7 @@ const createOrderController = async (req, res) => {
 // ===================== All Orders =====================
 const allOrdersController = async (req, res) => {
   try {
-    const allOrders = await orderModel.find({}).populate({
-      path: "products.productId",
-    });
+    const allOrders = await orderModel.find({});
 
     res.status(200).json({
       success: true,
@@ -113,18 +111,40 @@ const ordersByStatusController = async (req, res) => {
 const editOrderController = async (req, res) => {
   try {
     const orderId = req.params.id;
-    const { products, customer, courier, note } = req.body;
+    const {
+      products,
+      customer,
+      courier,
+      note,
+      status,
+      reviews,
+      deliveryCharge,
+      discount,
+    } = req.body;
+
+    // Build the update object dynamically
+    const updateObj = {
+      ...(products && { products }),
+      ...(customer && { customer }),
+      ...(courier && { courier }),
+      ...(note !== undefined && { note }),
+      ...(status && { status }),
+      ...(reviews && { reviews }),
+      ...(deliveryCharge !== undefined && { deliveryCharge }),
+      ...(discount !== undefined && { discount }),
+    };
 
     const updatedOrder = await orderModel.findByIdAndUpdate(
       orderId,
-      {
-        ...(products && { products }),
-        ...(customer && { customer }),
-        ...(courier && { courier }),
-        ...(note && { note }),
-      },
+      updateObj,
       { new: true }
     );
+
+    if (!updatedOrder) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
 
     res.json({
       success: true,
@@ -132,6 +152,7 @@ const editOrderController = async (req, res) => {
       data: updatedOrder,
     });
   } catch (error) {
+    console.log("Edit Order Error:", error);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
