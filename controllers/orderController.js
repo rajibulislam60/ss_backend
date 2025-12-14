@@ -136,10 +136,37 @@ const editOrderController = async (req, res) => {
   }
 };
 
+// ====================== Single Order ===================
+const singleOrderController = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+
+    const order = await orderModel.findById(orderId).populate({
+      path: "products.productId",
+    });
+
+    if (!order) {
+      return res.json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Single Order",
+      data: order,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
 module.exports = {
   createOrderController,
   allOrdersController,
   updateOrderStatusController,
   ordersByStatusController,
   editOrderController,
+  singleOrderController,
 };
