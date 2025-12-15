@@ -183,6 +183,36 @@ const singleOrderController = async (req, res) => {
   }
 };
 
+// ====================== Chart Order ===================
+const orderChartController = async (req, res) => {
+  try {
+    const orders = await orderModel.find({}).sort({ createdAt: 1 });
+
+    const chartMap = {};
+
+    orders.forEach(order => {
+      const date = new Date(order.createdAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "2-digit",
+      });
+
+      if (!chartMap[date]) {
+        chartMap[date] = { date, sell: 0, cancel: 0 };
+      }
+
+      if (order.status === "confirmed") chartMap[date].sell += 1;
+      if (order.status === "cancelled") chartMap[date].cancel += 1;
+    });
+
+    res.json({
+      success: true,
+      data: Object.values(chartMap),
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 module.exports = {
   createOrderController,
   allOrdersController,
@@ -190,4 +220,5 @@ module.exports = {
   ordersByStatusController,
   editOrderController,
   singleOrderController,
+  orderChartController,
 };

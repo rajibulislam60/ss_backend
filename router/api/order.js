@@ -6,6 +6,7 @@ const {
   ordersByStatusController,
   editOrderController,
   singleOrderController,
+  orderChartController,
 } = require("../../controllers/orderController");
 const router = express.Router();
 
@@ -17,5 +18,7 @@ router.get("/status/:status", ordersByStatusController);
 
 router.put("/edit/:id", editOrderController);
 router.get("/singleorder/:id", singleOrderController);
+
+router.get("/chart", orderChartController);
 
 module.exports = router;
